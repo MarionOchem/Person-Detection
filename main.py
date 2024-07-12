@@ -2,6 +2,7 @@ import cv2
 
 import model_integration, process_video, process_frame
 
+Local_WebCam_Stream = "http://192.168.1.19:8000/"
 
 
 def main():
@@ -10,7 +11,7 @@ def main():
 
     model = model_integration.initialize_model()
 
-    vidcap = process_video.capture_video("http://192.168.1.19:8000/")
+    vidcap = process_video.capture_video(Local_WebCam_Stream)
 
     try:    
         while True:
@@ -40,32 +41,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-    
-    # if vidcap.isOpened():
-    #     print("Cam open")
-
-    #     while True:
-            
-    #         ret, frame = vidcap.read()
-
-    #         if ret:
-
-    #             preds = model(frame)
-    #             detected_objects = preds.pandas().xyxy[0]
-
-    #             if len(detected_objects) > 0:
-    #                 print(detected_objects)
-
-    #                 for obj in detected_objects.itertuples():
-    #                     process_predictions.predictions_visualization(obj, frame) 
-
-    #             cv2.imshow("Frame", frame)
-
-    #             if cv2.waitKey(1) & 0xFF==ord('q'):
-    #                 break
-    #         else:
-    #             print("Error : no frame -- break")
-    #             break
