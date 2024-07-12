@@ -1,70 +1,71 @@
-import torch
 import cv2
 
-from drawBB import filter_predictions, draw_bounding_box_label_and_confidence
-
-# Model Integration
-model = torch.hub.load("ultralytics/yolov5", "yolov5s")
+import model_integration, process_video, process_frame
 
 
-# Real-time capture of webcam video
 
-vidcap = cv2.VideoCapture("http://192.168.1.19:8000/") # Create a variable that will hold the video capturing object.
+def main():
 
-if vidcap.isOpened():
-    print("Cam open")
+    print(" -- Person detection start -- ")
 
-    while True:
-        ret, frame = vidcap.read()
-        if ret:
+    model = model_integration.initialize_model()
 
-          # Inference
-            preds = model(frame)
-            detected_objects = preds.pandas().xyxy[0]
-            filtered_objects = filter_predictions(detected_objects)
+    vidcap = process_video.capture_video("http://192.168.1.19:8000/")
 
-            if len(filtered_objects) > 0:
-                print(filtered_objects)
+    try:    
+        while True:
+                
+            ret, frame = vidcap.read()
 
-                for obj in filtered_objects.itertuples():
-                    draw_bounding_box_label_and_confidence(obj, frame) 
-
-            cv2.imshow("Frame", frame)
-
-            if cv2.waitKey(1) & 0xFF==ord('q'):
+            if not ret:
+                print("Error : Failed to read frame")
                 break
 
+            detected_objects = process_frame.object_detection(model, frame)
+
+            for obj in detected_objects.itertuples():
+                process_frame.predictions_visualization(obj, frame)
+                  
+            cv2.imshow("Frame", frame)
 
 
-# if vidcap.isOpened():
-#     print("Camera is open")
+            if cv2.waitKey(1) & 0xFF==ord('q'):
+                print("Closing camera")
+                cv2.destroyAllWindows()
+                break
+                
+    finally:
+         vidcap.release()
+
+
+if __name__ == "__main__":
+    main()
+
+
+
     
-#     while True:
-#         ret, frame = vidcap.read()
-#         print(f"ret: {ret}, frame: {frame}")
+    # if vidcap.isOpened():
+    #     print("Cam open")
 
-#         if frame is None:
-#             print(" -- No captured frame : break -- ")
-#         else:
-#             # Inference
-#             preds = model(frame)
-#             detected_objects = preds.pandas().xyxy[0]
-#             filtered_objects = filter_predictions(detected_objects)
+    #     while True:
+            
+    #         ret, frame = vidcap.read()
 
-#             if len(filtered_objects) > 0:
-#                 print(filtered_objects)
+    #         if ret:
 
-#                 for obj in filtered_objects.itertuples():
-#                     draw_bounding_box_label_and_confidence(obj, frame) 
+    #             preds = model(frame)
+    #             detected_objects = preds.pandas().xyxy[0]
 
-#             # Display
-#             cv2.imshow("Frame", frame)
+    #             if len(detected_objects) > 0:
+    #                 print(detected_objects)
 
-#             if cv2.waitKey(1) & 0xFF==ord('q'):
-#                 break
-        
-#             print("Closing camera")
-#             vidcap.release()
+    #                 for obj in detected_objects.itertuples():
+    #                     process_predictions.predictions_visualization(obj, frame) 
 
-# else:
-#    print("Cannot open camera")
+    #             cv2.imshow("Frame", frame)
+
+    #             if cv2.waitKey(1) & 0xFF==ord('q'):
+    #                 break
+    #         else:
+    #             print("Error : no frame -- break")
+    #             break
