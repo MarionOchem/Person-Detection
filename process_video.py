@@ -7,7 +7,14 @@ from logging_utils import info_logger, camera_logger, camera_log_pattern
 
 
 def capture_video(url: str) -> Optional[cv2.VideoCapture]:
+    '''
+    Open a video capture stream from the specified url. 
 
+    :param url: url as a local network address pointing to a video stream source
+    :return: If successfully opened, a VideoCapture object from which read frames, otherwise None.
+    
+    '''
+    
     vidcap = cv2.VideoCapture(url)
 
     if vidcap.isOpened():

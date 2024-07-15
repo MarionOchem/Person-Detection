@@ -8,6 +8,12 @@ from logging_utils import info_logger, error_logger, model_logger, model_log_pat
 
 
 def initialize_model(retry_attemps: int = 3) -> Optional[torch.nn.Module]:
+    '''
+    Load a YOLOv5 model from the "ultralytics/yolov5" repository using Torch Hub.
+
+    :param retry_attempts: Number of attempts to retry model initialization in case of error. Default is 3.
+
+    '''
 
     try:
         model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
