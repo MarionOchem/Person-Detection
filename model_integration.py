@@ -2,23 +2,30 @@
 
 import torch
 import intel_extension_for_pytorch as ipex 
+from typing import Optional
 
-# operator pattern fusion to improve the efficiency of model execution. 
+from logging_utils import info_logger, error_logger, model_logger, model_log_pattern
 
-def initialize_model():
-    model = torch.hub.load("ultralytics/yolov5", "yolov5s")
-    model.eval() # Switches to evaludation mode / inference
-    model.classes = [0]
-    model.conf = 0.6
-    model = ipex.optimize(model, dtype=torch.float32)
 
-    if model is not None :
+def initialize_model(retry_attemps: int = 3) -> Optional[torch.nn.Module]:
+
+    try:
+        model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+        model.eval()        # Switches to evaludation mode / inference
+        model.classes = [0]         # Configure model to detect only class "Person" 
+        model.conf = 0.6        # Configure model to detect only predicions >= 0.6 confidence score
+        model = ipex.optimize(model, dtype=torch.float32)       # operator pattern fusion to improve the efficiency of model execution. 
+
+        model_log_pattern(model_logger, model)
+
+        info_logger.info(' -- Model succesfully integrated -- ')
         return model
-    else: 
-        print("Error : Failed to load model")
-        return None
     
+    except Exception as e:
 
-# je n'ai pas utilisé de class pour définir le model prcq 
-# je n'avais pas besoin de cette modularité : je n'ai qu'un model, 
-# un detaset et un use case d'inférence
+        if retry_attemps > 0:
+            error_logger.error(f'Error initializing model : {e} \n Retrying initialization. Attempts left : {retry_attemps - 1}')
+            return initialize_model(retry_attemps - 1)
+        else:
+            error_logger.error('Failed to initialize model after multiple attempts. Stopping program.')
+            raise RuntimeError
