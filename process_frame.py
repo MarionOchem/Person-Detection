@@ -14,18 +14,20 @@ def object_detection(model: torch.nn.Module, image: np.ndarray) -> Optional[pd.D
     Perform object detection on an input image using a given PyTorch model.
 
     :param model: YOLOv5 configured for object detection.
-    :param image: Input image process as a NumPy array by cv2 
+    :param image: Input image process as a NumPy array by cv2 : a 2-dimension matrix of RGB pixel value.
     :return: DataFrame containing detected objects' bounding box coordinates,
              confidence scores, and class labels. Returns None if no objects are detected
 
-    Note : Uncomment debug_logger.info to log detailed informatins about detected objects for each frame in terminal. 
-
+    Note : 
+    1. Machine state : uncomment debug_logger.debug to log detailed informations about frame input and detected objects for each frame in terminal.
+    2. Model contains input handling mechanisms built-in converting image to tensors [batch_size, channels, height, width] ->  torch.as_tensor() ?
     '''
+    # debug_logger.debug(f'Model input : {image}')
     preds = model(image)
-    detected_objects = preds.pandas().xyxy[0]
-    # debug_logger.info(detected_objects)
+    detectedObjects = preds.pandas().xyxy[0]
+    # debug_logger.debug(detected_objects)
 
-    return detected_objects
+    return detectedObjects
 
 
 def predictions_visualization(data: pd.Series, image: np.ndarray) -> np.ndarray:
