@@ -5,7 +5,8 @@ from logging_utils import info_logger, error_logger
 
 
 
-LocalWebCamStream = 'http://192.168.1.19:8000/'
+localWebCamStream = 'http://192.168.176.45:8000/'
+
 
 
 def main():
@@ -20,7 +21,7 @@ def main():
     model = model_initialization.initialize_model()
 
     # Capture video stream from the local webcam
-    vidcap = process_video.capture_video(LocalWebCamStream)
+    vidcap = process_video.capture_video(localWebCamStream)
 
     try: 
         # Main loop to read frames from video stream and perform object detection visualization  
