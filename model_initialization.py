@@ -16,7 +16,7 @@ def initialize_model(retry_attemps: int = 3) -> Optional[torch.nn.Module]:
     '''
 
     try:
-        model = torch.hub.load('ultralytics/yolov5', 'yolov5s')
+        model = torch.hub.load('ultralytics/yolov5', 'yolov5n')
         model.eval()        # Switches to evaludation mode / inference
         model.classes = [0]         # Configure model to detect only class "Person" 
         model.conf = 0.6        # Configure model to detect only predicions >= 0.6 confidence score
