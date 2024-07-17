@@ -13,7 +13,7 @@ https://docs.ultralytics.com/datasets/detect/coco/
 Guide to use YOLOv5 with PyTorch Hub 
 https://docs.ultralytics.com/yolov5/tutorials/pytorch_hub_model_loading/
 
-Intel Extension for PyTorch witg TorchScript Mode
+Intel Extension for PyTorch with TorchScript Mode
 https://pytorch.org/tutorials/recipes/recipes/intel_extension_for_pytorch.html
 
 
